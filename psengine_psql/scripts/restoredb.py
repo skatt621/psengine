@@ -4,8 +4,15 @@ import psycopg2
 
 from . import pageget
 
+def delfrompsql():
+    conn = psycopg2.connect(host="127.0.0.1", database="testdb", user="psengine", password="psengine")
+    c = conn.cursor()
+    c.execute("drop view v_finds; drop table words; drop table pages;")
+    conn.commit()
+    conn.close()
+    
+
 def getpagelist():
-#    conn = sqlite3.connect('psengine.db')
     conn = psycopg2.connect(host="127.0.0.1", database="testdb", user="psengine", password="psengine")
     c = conn.cursor()
     c.execute("SELECT COUNT(*) FROM pages")
@@ -15,7 +22,6 @@ def getpagelist():
 
 def inserts(info, wordcount):
     hashy, title, url, bodylen = info[0], info[1], info[2], info[3]
-#    conn = sqlite3.connect('psengine.db')
     conn = psycopg2.connect(host="127.0.0.1", database="testdb", user="psengine", password="psengine")
     c = conn.cursor()
     c.execute("INSERT INTO pages(hash, title_url, bodylen) values('%s', '%s', %s);" % (hashy, title + "||*-*||" + url, bodylen))
@@ -30,6 +36,7 @@ def inserts(info, wordcount):
     conn.close()
 
 def rebuilder():
+    delfrompsql()
     pageget.createtables()
     
     pagelisting = os.listdir("./pages")
@@ -54,13 +61,7 @@ def rebuilder():
 def main():
     # Remove corrupted/unwanted database
     listing = os.listdir("./")
-    if "psengine.db" in listing:
-        print("Do you want to delete and rebuild this database? %s" % os.getcwd() + "/" + "psengine.db")
-        os.remove("psengine.db")
-    else:
-        print("'psengine.db' not found. Would you like to rebuild it?")
-
-    resp = input("Press Y|y for yes or any other key for no. ")
+    resp = input("Do you want to recreate all tables in the PostgreSQL database 'testdb'?\nPress Y|y for yes or any other key for no. ")
     if resp.strip() in ["y", "Y"]:
         print("Database removed. Rebuilding...\n")
         rebuilder()
