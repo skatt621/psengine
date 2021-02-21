@@ -1,6 +1,5 @@
 # IMPORTS
 import os
-import sqlite3
 import psycopg2
 import datetime
 from datetime import datetime

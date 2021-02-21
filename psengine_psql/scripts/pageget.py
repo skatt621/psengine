@@ -2,7 +2,6 @@
 import os
 import shutil
 import html
-import sqlite3
 import requests
 import re
 import hashlib
@@ -12,6 +11,8 @@ from bs4.element import Comment
 import collections
 from collections import Counter as ctr
 import psycopg2
+import datetime
+from datetime import datetime
 
 # Operative functions
 def createtables():
@@ -182,8 +183,6 @@ def recpageinfo(url):
     # Creates a tuple with the pageid and the keys and values from the 
     #     `wordcount`, uses them to insert into the "words" table, commits our 
     #     changes, and closes the connection.
-    import datetime
-    from datetime import datetime
     dt = str(datetime.utcnow()).replace(" ", ":")
     queryfile = open("queryfile_%s" % dt, "w", encoding = "utf-8")
     wordcount_toex = [(pageid, k, v) for k, v in wordcount.items()]
